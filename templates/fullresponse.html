@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <title>Full Response</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #e0f7fa, #80deea);
+            color: #333;
+        }
+
+        #container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #00796b;
+            font-size: 2.3em;
+            margin-bottom: 20px;
+        }
+
+        .markdown {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #e0f2f1;
+            border-radius: 8px;
+            border: 1px solid #b2dfdb;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow-x: hidden;
+            word-wrap: break-word;
+        }
+
+        button {
+            padding: 14px 22px;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            background: #00796b;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #004d40;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        #copyButton {
+            background-color: #388e3c;
+        }
+
+        #playButton {
+            background-color: #fbc02d;
+        }
+
+        #stopButton {
+            background-color: #c62828;
+        }
+
+        #copyButton:hover {
+            background-color: #2c6e2f;
+        }
+
+        #playButton:hover {
+            background-color: #f9a825;
+        }
+
+        #stopButton:hover {
+            background-color: #b71c1c;
+        }
+
+        #backToHomeButton {
+            background-color: #0288d1;
+        }
+
+        #backToHomeButton:hover {
+            background-color: #0277bd;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h1>Full Response 📝</h1>
+        <div id="responseText" class="markdown"></div>
+        <button id="copyButton">Copy 📋</button>
+        <button id="playButton">Play ▶️</button>
+        <button id="stopButton" class="hidden">Stop ⏹️</button>
+        <button id="backToHomeButton">Back to Home 🏠</button>
+    </div>
+    <script>
+        function setupButtons(responseText) {
+            const copyButton = document.getElementById('copyButton');
+            copyButton.addEventListener('click', () => {
+                navigator.clipboard.writeText(responseText)
+                    .then(() => {
+                        copyButton.textContent = 'Copied ✅';
+                        setTimeout(() => {
+                            copyButton.textContent = 'Copy 📋';
+                        }, 2000);
+                    })
+                    .catch(error => {
+                        alert('Failed to copy text: ' + error.message);
+                    });
+            });
+
+            const utterance = new SpeechSynthesisUtterance(responseText);
+            document.getElementById('playButton').addEventListener('click', () => {
+                window.speechSynthesis.speak(utterance);
+                document.getElementById('playButton').classList.add('hidden');
+                document.getElementById('stopButton').classList.remove('hidden');
+            });
+            document.getElementById('stopButton').addEventListener('click', () => {
+                window.speechSynthesis.cancel();
+                document.getElementById('playButton').classList.remove('hidden');
+                document.getElementById('stopButton').classList.add('hidden');
+            });
+        }
+
+        window.onload = () => {
+            const storedResponse = localStorage.getItem('fullResponse');
+            if (storedResponse) {
+                document.getElementById('responseText').innerHTML = marked.parse(storedResponse);
+                setupButtons(storedResponse);
+            } else {
+                document.getElementById('responseText').innerHTML = 'No response available.';
+            }
+        };
+
+        document.getElementById('backToHomeButton').addEventListener('click', () => {
+            window.location.href = '/';
+        });
+
+    </script>
+</body>
+
+</html>
