@@ -3,8 +3,10 @@ from flask import Flask, request, jsonify, render_template
 import io
 import google.generativeai as genai
 import PyPDF2
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.config['ALLOWED_EXTENSIONS'] = {'pdf'}
 genai.configure(api_key=os.environ['API_KEY'])
 
